@@ -2,9 +2,10 @@ node_modules/
 package-lock.json 
 package.json 
 .env 
-data/raw/ 
-data/processed/ 
-data/splits/ 
+data/raw/*
+!data/raw/INGEST_NOTES.md
+data/processed/
+data/splits/
 *.pkl 
 __pycache__/ 
 *.pyc 
