@@ -1,0 +1,10 @@
+node_modules/ 
+package-lock.json 
+package.json 
+.env 
+data/raw/ 
+data/processed/ 
+data/splits/ 
+*.pkl 
+__pycache__/ 
+*.pyc 
