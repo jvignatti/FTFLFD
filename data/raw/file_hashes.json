@@ -1,0 +1,84 @@
+{
+  "generated": "2026-05-02T14:58:08",
+  "verification": {
+    "master_rows": 179282,
+    "yearly_rows_sum": 179159,
+    "rows_match": false,
+    "notes": "rows_match is false because 123 ghost rows in the master CSV have null ACCIDENTDATE and cannot be assigned to any yearly file. See INGEST_NOTES.md section 5.5 for details. These rows carry zero signal and will be dropped at ingestion."
+  },
+  "master": {
+    "file": "vt_crashes_all.csv",
+    "sha256": "f85ec5cd47342eabb7395b08e9f4d46f1d68e0321a16924583cecf65172f506e",
+    "rows": 179282
+  },
+  "yearly": {
+    "vt_crashes_2010.csv": {
+      "sha256": "2173689ca96232c66d00604ae882c93904e8a5dc694dd8ea298679b84d57b6d0",
+      "rows": 11200
+    },
+    "vt_crashes_2011.csv": {
+      "sha256": "f570c94f6d7966a334fd6fdc266ed8c732a0d292c0bb3061ce7cc666592c66eb",
+      "rows": 12647
+    },
+    "vt_crashes_2012.csv": {
+      "sha256": "c5bfa0a8fcb1d72e67cb27f1133ae1e3d989757fbee776f8d36afdd27dee864c",
+      "rows": 11649
+    },
+    "vt_crashes_2013.csv": {
+      "sha256": "73269d0cbe68f05c41f2dcfd9fdd430c4f4f77842798cc7667260f8bb95c8108",
+      "rows": 13798
+    },
+    "vt_crashes_2014.csv": {
+      "sha256": "e90aa7854a4f4d46c659cda2c8b17213800aec1676e3d1827cedaab343da510a",
+      "rows": 12731
+    },
+    "vt_crashes_2015.csv": {
+      "sha256": "2ba99577048d7617c02809a1fff127423a3088c68e4a7c69b5b286a1cdd95be8",
+      "rows": 14113
+    },
+    "vt_crashes_2016.csv": {
+      "sha256": "be2eeaf334723b476be7cb3c67938967d4e4e0980b3c8dcd6657e13077bf4e3e",
+      "rows": 12657
+    },
+    "vt_crashes_2017.csv": {
+      "sha256": "ee54ee0f4656588c637d27b77128eaa02a24cfb960d66f7714c0593240e19990",
+      "rows": 12669
+    },
+    "vt_crashes_2018.csv": {
+      "sha256": "97b132d25e22c5c15f4664596e716b71c85fce68a3668702d866000dac65655d",
+      "rows": 10272
+    },
+    "vt_crashes_2019.csv": {
+      "sha256": "7bbed8dca10d64285fd722e8575c4c7b7ed381a16782116ac098d3b67ea20991",
+      "rows": 13552
+    },
+    "vt_crashes_2020.csv": {
+      "sha256": "56d13df3f51156fcfc0c7b7e5a75ecf56a6a7db99f26d6abc39c7aa50c577e50",
+      "rows": 10549
+    },
+    "vt_crashes_2021.csv": {
+      "sha256": "1f26a2ffb46d2a317e0f536f18f7b7b7a1a2e508251f9bd76bb38b5ab8f7f490",
+      "rows": 10533
+    },
+    "vt_crashes_2022.csv": {
+      "sha256": "9f1a0d6e5a7941b0c45bcdc16acfb2a957e0afbb7bb582b30557eddc7903ed75",
+      "rows": 8433
+    },
+    "vt_crashes_2023.csv": {
+      "sha256": "f61ad75d1b8a718dd08dbfbeb3312d37287ad5e59874933688f06699a2d9f296",
+      "rows": 7177
+    },
+    "vt_crashes_2024.csv": {
+      "sha256": "0d901b828ffbeba4133135863df7b845ad046c4d2b31bebd9012fa08d5cd0c97",
+      "rows": 7063
+    },
+    "vt_crashes_2025.csv": {
+      "sha256": "9591d3d1228bbc00fcc31bd56343fcb2b10f32dcad63936cbbd65c071f3b371c",
+      "rows": 7593
+    },
+    "vt_crashes_2026.csv": {
+      "sha256": "ec44f496ff553776f1c466e0de73dc0fb6799db0964e5b59d2fdf67b3b64bdb5",
+      "rows": 2523
+    }
+  }
+}

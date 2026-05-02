@@ -162,6 +162,24 @@ Per the VTrans glossary:
 
 **Implication:** Features derived from distraction or impairment fields must be computed with awareness of these reporting regime changes, or restricted to post-2014 data.
 
+### 5.5 Ghost Rows — Empty Placeholder Records (123 of 179,282 — 0.069%)
+
+A row reconciliation check during yearly file splitting revealed 123 records that exist in the master CSV but landed in zero yearly files. Investigation confirmed these are **structurally empty records**.
+
+**Characteristics:**
+- Each row has only `OBJECTID` and `REPORTNUMBER` populated
+- All 34 other columns (date, agency, injury type, coordinates, location, etc.) are NaN
+- `REPORTNUMBER` values follow patterns like `10-44`, `10-2715`, `0187`, `10-2040`, suggesting 2010-era origin
+- They cannot be assigned to any year because `ACCIDENTDATE` is null
+
+**Hypothesis:** These are placeholder records created when a crash report was opened in the law enforcement system but never populated, or records that were voided after creation. They are not corrupted — they are structurally incomplete.
+
+**Decision:** Drop at ingestion with zero information loss. These rows carry no signal: no target label, no features, no location, no severity classification.
+
+**Detection method:** Row reconciliation check in `src/utils/hash_data.py` flagged the discrepancy. The check compares master row count against the sum of yearly file row counts. This is the canonical method for detecting silent data loss during splitting.
+
+**Audit trail:** The full set of 123 orphaned rows is preserved locally at `data/raw/orphaned_rows.csv` (gitignored) for future reference. The investigation script is at `src/utils/investigate_orphans.py`.
+
 ## 6. Glossary Anchors (From VTrans Source Documentation)
 
 The following definitions are taken directly from the VTrans Public Query Tool glossary and govern label derivation for this project:

@@ -1,9 +1,13 @@
-node_modules/ 
-package-lock.json 
-package.json 
-.env 
+node_modules/
+package-lock.json
+package.json
+.env
+.claude/
+
 data/raw/*
 !data/raw/INGEST_NOTES.md
+!data/raw/split.py
+!data/raw/file_hashes.json
 data/processed/
 data/splits/
 *.pkl 
