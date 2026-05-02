@@ -1,0 +1,31 @@
+version: "1.1"
+created: "2026-05-02"
+notes: "Active feature registry. New features added only after passing 3-gate test."
+
+# 3-gate acceptance rules (locked from project methodology)
+gates:
+  gate_1_availability: "Feature must be available for at least 95% of training rows"
+  gate_2_signal: "Mutual info > 0.01 OR Spearman correlation > 0.05 with target"
+  gate_3_incremental_gain: "Adding feature must improve val recall by at least 0.005"
+
+# Active features grouped by category
+active_features:
+  temporal: []
+  spatial: []
+  contextual:
+    - name: data_era
+      values: [early, historical, modern]
+      definition: "early=2010-2014, historical=2015-2019, modern=2020+"
+      status: locked
+      gate_exempt: true
+      rationale: "Required by splits.yaml data_era_flag_required. Added at ingestion, not derived."
+  derived: []
+
+# Features tested and rejected (audit trail — do not retry without new evidence)
+rejected_features: []
+
+# How to add a new feature:
+# 1. Pass all 3 gates
+# 2. Add to appropriate category in active_features
+# 3. Document rationale in iteration_log.md
+# 4. Bump version

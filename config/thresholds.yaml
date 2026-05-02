@@ -1,0 +1,35 @@
+version: "1.0"
+created: "2026-05-02"
+notes: "All numerical thresholds locked from methodology decisions. Changes require new version."
+
+# Reproducibility
+random_seed: 42
+
+# Prediction windows by phase
+prediction_windows:
+  phase_1_mvp: 30      # days — current target
+  phase_2: 90          # days — operational planning (future)
+  phase_3: 365         # days — strategic decisions (future)
+
+# Kill switch (full project stop conditions)
+kill_switch:
+  max_iterations: 20
+  min_recall_improvement: 0.03   # 3 percentage points absolute on val recall
+
+# Overfitting and generalization warnings
+warnings:
+  generalization_gap_max: 0.10   # train_recall - val_recall must stay below this
+  benchmark_gap_max: 0.05        # val_recall - benchmark_recall must stay below this
+
+# Success criteria by tier
+success_tiers:
+  mvp_working:        { val_recall: 0.60, max_gen_gap: 0.10 }
+  system_useful:      { val_recall: 0.75, expert_geographic_validation: required }
+  production_ready:   { val_recall: 0.80, stable_consecutive_benchmarks: 3 }
+
+# Tuning priority (locked from contract)
+tuning_priority:
+  primary_metric: recall
+  secondary_metric: precision
+  rationale: "False negatives unacceptable — a missed fatal location may cost a life. False positives acceptable — costs patrol resources only."
+  class_weight: balanced

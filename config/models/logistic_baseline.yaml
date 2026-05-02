@@ -1,0 +1,21 @@
+version: "1.0"
+created: "2026-05-02"
+model: logistic_regression
+purpose: "Baseline model. Locked first step of methodology. Must validate pipeline before any model upgrade is permitted."
+
+# Reproducibility
+random_state: 42
+
+# Hyperparameters (intentionally unoptimized — this is the floor, not the ceiling)
+hyperparameters:
+  C: 1.0
+  max_iter: 1000
+  class_weight: balanced
+  solver: lbfgs
+  random_state: 42
+
+# Pipeline requirements
+preprocessing:
+  required_steps:
+    - StandardScaler  # Logistic regression requires scaled features
+  rationale: "Unscaled features will produce meaningless coefficients and broken convergence."

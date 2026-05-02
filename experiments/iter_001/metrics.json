@@ -1,0 +1,32 @@
+{
+  "_schema_version": "1.0",
+  "_documentation": "Filled by trainer.py at iteration time. Schema documented at docs/technical/01_project_design.md",
+  "iter_id": null,
+  "date": null,
+  "train": {
+    "recall": null,
+    "precision": null,
+    "f1": null,
+    "support_positive": null,
+    "support_total": null
+  },
+  "val": {
+    "recall": null,
+    "precision": null,
+    "f1": null,
+    "support_positive": null,
+    "support_total": null
+  },
+  "benchmark": {
+    "set": null,
+    "recall": null,
+    "precision": null,
+    "f1": null,
+    "audit_only": true
+  },
+  "diagnostics": {
+    "generalization_gap": null,
+    "benchmark_gap": null,
+    "overfitting_warning": null
+  }
+}

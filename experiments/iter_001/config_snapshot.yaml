@@ -1,0 +1,19 @@
+iter_id: "001"
+date: null  # filled at iteration time
+model_config: null  # path or copy of config/models/X.yaml used
+splits_config_version: null  # version of splits.yaml used
+features_config_version: null  # version of features.yaml used
+thresholds_config_version: null  # version of thresholds.yaml used
+data_snapshot:
+  raw_data_files: []  # filenames of raw data used
+  raw_data_hashes: {}  # SHA256 of each raw file for tamper detection
+  rows_train: null
+  rows_val: null
+  rows_b1: null
+  rows_b2: null
+  rows_b3: null
+git:
+  commit_sha: null  # exact code state used
+  branch: null
+random_seed: 42
+notes: "Filled by trainer.py at iteration time. Provides full reproducibility audit trail."
