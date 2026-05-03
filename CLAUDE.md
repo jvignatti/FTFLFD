@@ -36,7 +36,7 @@ The following must be completed and locked before Iteration 001 can begin:
 - **Negative class (0):** InjuryType = "Property Damage Only"
 - **Excluded from training:** InjuryType = blank, null, or unknown (dropped entirely, never labeled as 0)
 - **Prediction window:** 30 days
-- **Prediction unit:** BLOCKER — must be locked before Iteration 001 (see docs/technical/01_project_design.md Section 1.3)
+- **Prediction unit:** LOCKED — (LRSNUMBER, floor(AOTACTUALMILEPOINT), 30-day window). See docs/technical/03_prediction_unit.md (see docs/technical/01_project_design.md Section 1.3)
 - **Priority:** Maximize recall with emphasis on Fatal recall. Precision floor of 0.05. Maximum flag rate of 30%.
 - **Known limitation:** The `Injury` category does not distinguish between serious and minor injuries. A supplementary dataset from the Department of Health may provide this granularity in a future phase. This limitation is documented, not solved. Do not plan around data that does not yet exist in the pipeline.
 
