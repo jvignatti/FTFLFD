@@ -200,7 +200,7 @@ Threshold selection (the probability cutoff for classifying a prediction unit as
 
 ## Class Imbalance Strategy
 
-Fatal and serious injury crashes are rare events relative to the full dataset. The following strategies are required:
+Fatal and injury crashes are rare events relative to the full dataset. Note: the current dataset does not distinguish between serious and minor injuries. The "Injury" category includes all severity levels. Serious Injury as a distinct class will only become available when Department of Health data is integrated in a future phase. Do not plan around data that does not yet exist. The following strategies are required:
 
 1. **Mandatory for all models:** Use `class_weight="balanced"` (or equivalent) as the default. This is non-negotiable for the baseline.
 2. **Permitted alternatives (one at a time, as iteration changes):**
