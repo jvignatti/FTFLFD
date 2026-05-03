@@ -6,10 +6,12 @@ FTFLFD is a proactive traffic fatality and serious injury prediction system for 
 
 This is a methodology-driven ML system. Discipline over creativity. Boring models first. A system that learns to improve predictions, not just predict events.
 
+The goal is proactive prevention of the most severe outcomes — fatalities and serious injuries — not general crash prediction. A model optimized for overall accuracy that misses fatal events has failed its purpose regardless of its aggregate metrics.
+
 ## Core Principles (Non-Negotiable)
 
 1. **One change per iteration.** Never change two things at once. Every iteration modifies exactly one variable — one feature, one hyperparameter, one preprocessing step, OR one threshold. Never a combination.
-2. **Recall-prioritized with precision floor.** False negatives (missed fatalities) are unacceptable. False positives (over-flagging) are acceptable within operational limits. Primary metric is recall. However, precision must not fall below 0.05 (5%) — a model that flags everything is useless. Maximum flag rate must remain operationally viable (no more than 30% of prediction units flagged as high-risk per cycle).
+2. **Recall-prioritized with precision floor.** False negatives (missed fatalities) are unacceptable. False positives (over-flagging) are acceptable within operational limits. Primary metric is Fatal recall. However, precision must not fall below 0.05 (5%) — a model that flags everything is useless. Maximum flag rate must remain operationally viable (no more than 30% of prediction units flagged as high-risk per cycle).
 3. **Boring models first.** Progression: Logistic Regression → Random Forest → Gradient Boosting → Ensembles/Deep Learning. Never skip levels. Never advance without documented exhaustion of simpler models (see Model Advancement Criteria below).
 4. **Zero data leakage.** No feature, encoding, or aggregate may use information from the future. Rolling windows cannot cross split boundaries. Encodings are fit on training only. See Leakage Rules for full specification.
 5. **Frozen benchmarks.** Benchmark sets are never used for tuning. B1 every 5 iterations (log only). B2 every 10 iterations (log only). B3 once per phase. B4 once ever (final test). Benchmark results must NEVER influence any modeling, feature, or threshold decision. They exist solely as an audit trail.
@@ -25,15 +27,51 @@ The following must be completed and locked before Iteration 001 can begin:
 3. **Split logic must be programmatically enforced and tested.** The split boundaries in config/splits.yaml must be enforced by code in src/training/splitter.py with automated assertions (not manual verification). tests/test_splitter.py must pass before any training run.
 4. **Virtual environment must be active with pinned dependencies.** All dependencies must be installed from requirements.txt in an isolated Python 3.11 environment.
 
-## Event Contract (v1.0 — LOCKED)
+## Event Contract (v1.1 — LOCKED)
 
 - **Target column:** `InjuryType` (this is the canonical column name across the entire project — do not use `Crash Type`, `CrashType`, `severity`, or any other variant)
-- **Positive class (1):** InjuryType = "Fatal" OR InjuryType = "Injury"
+- **Positive class (1):**
+  - `Fatal` — PRIMARY TARGET. Zero tolerance for false negatives. Every missed fatality is a system failure.
+  - `Injury` — SECONDARY TARGET. All injury severities combined (current data limitation — severity granularity not available in source dataset).
 - **Negative class (0):** InjuryType = "Property Damage Only"
 - **Excluded from training:** InjuryType = blank, null, or unknown (dropped entirely, never labeled as 0)
 - **Prediction window:** 30 days
 - **Prediction unit:** BLOCKER — must be locked before Iteration 001 (see docs/technical/01_project_design.md Section 1.3)
-- **Priority:** Maximize recall with precision floor of 0.05 and maximum flag rate of 30%
+- **Priority:** Maximize recall with emphasis on Fatal recall. Precision floor of 0.05. Maximum flag rate of 30%.
+- **Known limitation:** The `Injury` category does not distinguish between serious and minor injuries. A supplementary dataset from the Department of Health may provide this granularity in a future phase. This limitation is documented, not solved. Do not plan around data that does not yet exist in the pipeline.
+
+### Target Hierarchy
+
+| Priority | Category | Definition | Tolerance for Missing |
+|---|---|---|---|
+| 1 (highest) | Fatal | At least one person killed | Zero — every miss is a system failure |
+| 2 | Injury | At least one person injured (all severities) | Low — but secondary to Fatal |
+| 3 (negative) | PDO | Property damage only, no injuries | N/A — negative class |
+| excluded | blank/unknown | No severity recorded | Dropped from training entirely |
+
+### Reporting Requirement
+
+Every model evaluation MUST report recall separately for:
+- Fatal events only
+- Injury events only
+- Combined Fatal + Injury (FSI)
+
+A model that achieves high combined recall but low Fatal recall is NOT acceptable. Fatal recall is the primary success metric.
+
+### False Negative Review Requirement
+
+All false negatives must be reviewed by severity category after each iteration:
+- Fatal false negatives receive individual case review (what location, what features, why was it missed)
+- Injury false negatives are reviewed in aggregate (patterns, geographic clusters, temporal patterns)
+
+### Future Modeling Option (Reference Only — Do Not Implement Until Data Supports It)
+
+When injury severity data becomes available, consider parallel model outputs:
+- P(Fatal) — probability of a fatal event at this location
+- P(Serious Injury) — probability of a serious injury event
+- P(FSI) — combined fatal + serious injury risk
+
+This requires a data source with severity granularity. Do not implement until such data is integrated and validated.
 
 ## Split Strategy (v1.1)
 
@@ -63,6 +101,7 @@ The following must be completed and locked before Iteration 001 can begin:
 - If threshold not met for 3 consecutive iterations → full stop, root cause analysis
 - Generalization gap warning: train_recall - val_recall > 0.10
 - Benchmark gap warning: val_recall - benchmark_recall > 0.05
+- Fatal recall floor: if Fatal recall drops below 0.50 on validation at any iteration, this is a hard stop regardless of combined metrics. The model cannot miss more than half of fatal locations.
 - All kill switch verdicts recorded in experiments/registry.csv
 
 ## Model Advancement Criteria
@@ -154,7 +193,7 @@ Every change to the active feature set bumps the version in config/features.yaml
 Threshold selection (the probability cutoff for classifying a prediction unit as high-risk) is a modeling decision that must follow these rules:
 
 1. **Default threshold:** 0.5 for baseline. Adjusted only after baseline is validated.
-2. **Selection method:** Choose threshold that maximizes recall subject to the precision floor (≥ 0.05) and maximum flag rate (≤ 30%).
+2. **Selection method:** Choose threshold that maximizes Fatal recall subject to the precision floor (≥ 0.05) and maximum flag rate (≤ 30%).
 3. **Threshold is a single variable.** Changing the threshold counts as one iteration change. It cannot be combined with feature or model changes.
 4. **Threshold must be logged** in each experiment's config_snapshot.yaml and metrics.json.
 5. **Precision-recall curve** must be generated and stored in each experiment directory when threshold is adjusted.
@@ -230,10 +269,10 @@ Every iteration MUST log the following in experiments/iter_NNN/:
 - class distribution per split (positive count, negative count, ratio)
 
 ### metrics.json (machine-readable)
-- Train: recall, precision, f1, support_positive, support_total
-- Val: recall, precision, f1, support_positive, support_total
-- Benchmark (if run): set used, recall, precision, f1, audit_only: true
-- Diagnostics: generalization_gap, benchmark_gap, overfitting_warning
+- Train: recall_fatal, recall_injury, recall_combined, precision, f1, support_positive, support_total
+- Val: recall_fatal, recall_injury, recall_combined, precision, f1, support_positive, support_total
+- Benchmark (if run): set used, recall_fatal, recall_injury, recall_combined, precision, f1, audit_only: true
+- Diagnostics: generalization_gap, benchmark_gap, overfitting_warning, fatal_recall_floor_check
 - Calibration: brier_score (after baseline is validated)
 - Threshold: value used, flag_rate, precision_at_threshold
 
@@ -242,9 +281,77 @@ Every iteration MUST log the following in experiments/iter_NNN/:
 - Hypothesis
 - Qualitative result
 - Decision (Accepted / Rejected)
+- Fatal false negative review (individual case analysis if any fatalities were missed)
+- Injury false negative review (aggregate pattern analysis)
 - Observations
 
 ### requirements_frozen.txt
 - Output of pip freeze at time of run
 
 ## Project Structure
+- config/          — Split dates, feature registry, thresholds, model configs
+- data/raw/        — Raw CSVs (gitignored), INGEST_NOTES.md, split.py, file_hashes.json
+- data/processed/  — Cleaned DataFrames (gitignored)
+- data/splits/     — Train/val/benchmark parquet files (gitignored)
+- docs/technical/  — Design doc, COVID impact doc
+- docs/policy/     — Stakeholder documentation (TBD)
+- experiments/     — registry.csv, iteration_log.md, benchmark_audit.jsonl, iter_NNN/
+- notebooks/       — EDA only, never imported by src/
+- src/ingestion/   — Data loading and validation
+- src/features/    — Feature engineering, registry, gate tests
+- src/training/    — Splitter and trainer
+- src/evaluation/  — Metrics and reports
+- src/leakage/     — Leakage assertion checks
+- src/predict/     — Forward prediction (future phase)
+- src/tracking/    — Experiment tracker
+- src/utils/       — IO helpers, hash utilities
+- tests/           — Test suite
+
+## Environment
+
+- Python 3.11 (pinned in .python-version)
+- Dependencies in requirements.txt
+- Cross-platform runner: python run.py [install|test|lint|check-leakage]
+- Git repo: https://github.com/jvignatti/FTFLFD
+
+## What Claude Code Must NEVER Do
+
+- Never use benchmark data (B1/B2/B3/B4) for any training or tuning decision
+- Never let benchmark results influence modeling, feature, or threshold decisions
+- Never commit raw crash data to GitHub
+- Never change two variables in one iteration (model + features, features + threshold, etc.)
+- Never advance to a more complex model without documented exhaustion of simpler models
+- Never skip leakage checks before training
+- Never write code without reading and following the relevant config files first
+- Never modify locked documents (event contract, split strategy) without explicit version bump approval
+- Never use `Crash Type` or any synonym — the target column is always `InjuryType`
+- Never use unregistered data (all files must have SHA256 in file_hashes.json before use)
+- Never begin Iteration 001 without the prediction unit being locked
+- Never apply resampling (SMOTE, oversampling, undersampling) to validation or benchmark sets
+- Never compute global statistics across the full dataset for use as features
+- Never report only combined recall — Fatal and Injury recall must always be reported separately
+- Never optimize for Injury recall at the expense of Fatal recall
+- Never treat a model with high combined metrics but low Fatal recall as acceptable
+
+## What Claude Code Should Always Do
+
+- Read this file at session start
+- Check config/ files before writing any pipeline code
+- Run leakage assertions before any training
+- Log every experiment in experiments/registry.csv and experiments/iteration_log.md
+- Record random seed, dataset hash, and feature set version in every experiment
+- Capture pip freeze to requirements_frozen.txt in each experiment directory
+- Report recall separately for Fatal, Injury, and Combined FSI in every evaluation
+- Review fatal false negatives individually after every iteration
+- Commit with descriptive messages that explain what changed and why
+- Ask before acting on ambiguous requests
+- Verify prediction unit is locked before any training code executes
+
+## Key Documents to Read
+
+- docs/technical/01_project_design.md — Full system design
+- docs/technical/02_covid_impact.md — Why 2020–2021 is in validation
+- data/raw/INGEST_NOTES.md — Raw data documentation and known quality issues
+- config/splits.yaml — Split boundaries and gap rules
+- config/features.yaml — Feature registry and 3-gate rules
+- config/thresholds.yaml — Kill switch, success tiers, warning thresholds
