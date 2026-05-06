@@ -1,3 +1,5 @@
+> **Note (2026-05-02):** This document reflects the initial project design. The authoritative source for current rules is CLAUDE.md at the project root. Key updates since this document was written: Event Contract v1.1 (Fatal as primary target), adaptive kill switch, prediction unit locked (1-mile LRS segments). A full revision of this document is pending.
+
 # FTFLFD — Project Design Document
 
 **Version:** 1.0  
