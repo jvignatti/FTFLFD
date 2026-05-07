@@ -13,3 +13,4 @@ data/splits/
 *.pkl 
 __pycache__/ 
 *.pyc 
+.venv/ 
