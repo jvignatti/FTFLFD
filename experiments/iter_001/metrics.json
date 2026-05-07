@@ -1,32 +1,58 @@
 {
   "_schema_version": "1.0",
-  "_documentation": "Filled by trainer.py at iteration time. Schema documented at docs/technical/01_project_design.md",
-  "iter_id": null,
-  "date": null,
+  "_documentation": "Iteration 001 baseline. See CLAUDE.md for metric definitions.",
+  "iter_id": "iter_001",
+  "date": "2026-05-07",
   "train": {
-    "recall": null,
-    "precision": null,
-    "f1": null,
-    "support_positive": null,
-    "support_total": null
+    "split": "train",
+    "recall_combined": 0.633,
+    "recall_fatal": 0.6598,
+    "recall_injury": 0.6323,
+    "precision": 0.061,
+    "f1": 0.1112,
+    "flag_rate": 0.143,
+    "true_positives": 55750,
+    "false_positives": 858574,
+    "true_negatives": 5448069,
+    "false_negatives": 32317,
+    "support_positive": 88067,
+    "support_negative": 6306643,
+    "support_total": 6394710,
+    "fatal_windows_total": 2419,
+    "injury_only_windows_total": 85648
   },
   "val": {
-    "recall": null,
-    "precision": null,
-    "f1": null,
-    "support_positive": null,
-    "support_total": null
+    "split": "val",
+    "recall_combined": 0.5688,
+    "recall_fatal": 0.508,
+    "recall_injury": 0.5716,
+    "precision": 0.0521,
+    "f1": 0.0955,
+    "flag_rate": 0.3172,
+    "true_positives": 6573,
+    "false_positives": 119481,
+    "true_negatives": 266308,
+    "false_negatives": 4982,
+    "support_positive": 11555,
+    "support_negative": 385789,
+    "support_total": 397344,
+    "fatal_windows_total": 500,
+    "injury_only_windows_total": 11055
   },
   "benchmark": {
     "set": null,
-    "recall": null,
+    "recall_combined": null,
+    "recall_fatal": null,
+    "recall_injury": null,
     "precision": null,
     "f1": null,
-    "audit_only": true
+    "audit_only": true,
+    "note": "Benchmark not run at iteration 001 (per protocol: B1 at iteration 5)"
   },
   "diagnostics": {
-    "generalization_gap": null,
+    "generalization_gap": 0.0642,
     "benchmark_gap": null,
-    "overfitting_warning": null
+    "overfitting_warning": false,
+    "fatal_recall_floor_check": true
   }
 }

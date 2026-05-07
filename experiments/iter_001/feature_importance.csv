@@ -1,0 +1,9 @@
+feature,abs_coefficient
+segment_injury_rate,1.3743
+segment_type_is_grid,0.1724
+segment_pdo_rate,0.1667
+segment_fatal_rate,0.1263
+month,0.0484
+is_weekend_heavy,0.0358
+segment_crash_rate,0.0288
+is_winter,0.0149
