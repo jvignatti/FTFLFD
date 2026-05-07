@@ -233,6 +233,7 @@ def load_all_years(
     print(f"\nConcatenating {len(frames)} years...")
     df = pd.concat(frames, ignore_index=True)
     print(f"  Total rows after concat: {len(df):,}")
+    df = df.sort_values("event_date").reset_index(drop=True)
 
     # Apply pipeline steps in order
     print("\nAssigning targets...")
