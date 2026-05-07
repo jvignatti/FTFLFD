@@ -32,4 +32,18 @@ Copy this template for every new iteration:
 
 ## Iterations
 
-(Entries appear below as iterations occur.)
+### iter_001 — 2026-05-02
+
+**Change:** Baseline logistic regression with 8 features (4 segment rates, 3 calendar, 1 segment type)
+
+**Hypothesis:** Historical crash rates per segment combined with seasonal indicators should predict above random chance. This validates the pipeline, not the model.
+
+**Result:** Pipeline validated end-to-end. Model beats random chance on all metrics. Fatal recall at 0.508 on validation is barely above the 0.50 hard stop floor — this is the top priority for iteration 002. Flag rate at 31.7% slightly exceeds the 30% maximum. Generalization gap 0.064 is healthy. segment_injury_rate dominates feature importance by a large margin (1.374 vs next highest 0.172).
+
+**Decision:** Accepted
+
+**Fatal FN review:** 246 fatal windows missed on validation (500 total, 254 caught). Not reviewed individually at baseline — individual review begins at iteration 002.
+
+**Notes:** 41,376 val observations come from segments not seen in training (rates set to 0). This is expected — new crash locations emerge over time. The model relies on calendar features alone for these segments. This is a realistic simulation of deployment conditions.
+
+---
