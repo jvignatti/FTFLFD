@@ -1,1 +1,3 @@
 iter_id,date,model,change_description,hypothesis,recall_train,recall_val,precision_val,recall_delta,generalization_gap,benchmark_set_used,benchmark_recall,accepted,kill_switch_verdict,notes
+iter_001,5/2/2026,logistic_regression,baseline — 8 features,pipeline validation — simplest possible model with historical rates and calendar features,0.633,0.5688,0.0521,-,0.0642,,,Y,continue,fatal recall 0.508 barely above floor — priority for iter_002
+iter_002,5/2/2026,logistic_regression,threshold adjustment 0.50 to 0.52,lower flag rate while maintaining fatal recall,0.5973,0.5378,0.0551,-0.031,0.0595,,,N,continue,REJECTED — fatal recall dropped to 0.456 below 0.50 floor. Threshold cannot fix signal problem.

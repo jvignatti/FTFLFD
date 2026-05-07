@@ -1,0 +1,45 @@
+active_features:
+- segment_crash_rate
+- segment_fatal_rate
+- segment_injury_rate
+- segment_pdo_rate
+- month
+- is_winter
+- is_weekend_heavy
+- segment_type_is_grid
+date: '2026-05-07'
+feature_set_version: '1.1'
+hyperparameters:
+  C: 1.0
+  class_weight: balanced
+  max_iter: 1000
+  random_state: 42
+  solver: lbfgs
+iter_id: iter_002
+model_class: LogisticRegression
+predecessor: iter_001
+random_seed: 42
+splits_config_version: '1.1'
+threshold: !!python/object/apply:numpy._core.multiarray.scalar
+- &id001 !!python/object/apply:numpy.dtype
+  args:
+  - f8
+  - false
+  - true
+  state: !!python/tuple
+  - 3
+  - <
+  - null
+  - null
+  - null
+  - -1
+  - -1
+  - 0
+- !!binary |
+  pHA9Ctej4D8=
+threshold_change_from: 0.5
+threshold_change_to: !!python/object/apply:numpy._core.multiarray.scalar
+- *id001
+- !!binary |
+  pHA9Ctej4D8=
+thresholds_config_version: '1.0'

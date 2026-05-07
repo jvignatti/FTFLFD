@@ -46,4 +46,16 @@ Copy this template for every new iteration:
 
 **Notes:** 41,376 val observations come from segments not seen in training (rates set to 0). This is expected — new crash locations emerge over time. The model relies on calendar features alone for these segments. This is a realistic simulation of deployment conditions.
 
+### iter_002 — 2026-05-02
+
+**Change:** Classification threshold adjusted from 0.50 to 0.52 (best feasible threshold from sweep)
+
+**Hypothesis:** Raising threshold slightly would reduce flag rate below 30% while maintaining fatal recall above 0.50. The model may already have sufficient signal but the decision boundary is suboptimal.
+
+**Result:** Hypothesis rejected. Flag rate improved (0.317 → 0.284) but fatal recall dropped from 0.508 to 0.456 — below the 0.50 hard stop floor. No feasible threshold exists that satisfies both constraints simultaneously. This confirms the problem is insufficient signal for fatal windows, not a suboptimal decision boundary.
+
+**Decision:** Rejected
+
+**Key insight:** The tension between flag rate and fatal recall cannot be resolved by threshold adjustment alone. The model needs features that specifically improve fatal window discrimination. Next iteration must target feature improvement, not model or threshold changes.
+
 ---

@@ -1,0 +1,47 @@
+{
+  "_schema_version": "1.0",
+  "iter_id": "iter_002",
+  "date": "2026-05-07",
+  "train": {
+    "split": "train",
+    "recall_combined": 0.5973,
+    "recall_fatal": 0.5788,
+    "recall_injury": 0.5978,
+    "precision": 0.0661,
+    "f1": 0.119,
+    "flag_rate": 0.1245,
+    "true_positives": 52599,
+    "false_positives": 743404,
+    "true_negatives": 5563239,
+    "false_negatives": 35468,
+    "support_positive": 88067,
+    "support_total": 6394710,
+    "fatal_windows_total": 2419
+  },
+  "val": {
+    "split": "val",
+    "recall_combined": 0.5378,
+    "recall_fatal": 0.456,
+    "recall_injury": 0.5415,
+    "precision": 0.0551,
+    "f1": 0.0999,
+    "flag_rate": 0.284,
+    "true_positives": 6214,
+    "false_positives": 106634,
+    "true_negatives": 279155,
+    "false_negatives": 5341,
+    "support_positive": 11555,
+    "support_total": 397344,
+    "fatal_windows_total": 500
+  },
+  "benchmark": {
+    "set": null,
+    "audit_only": true,
+    "note": "Benchmark not run at iteration 002 (per protocol: B1 at iteration 5)"
+  },
+  "diagnostics": {
+    "generalization_gap": 0.0595,
+    "overfitting_warning": false,
+    "fatal_recall_floor_check": false
+  }
+}
