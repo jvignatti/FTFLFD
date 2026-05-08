@@ -70,4 +70,40 @@ Copy this template for every new iteration:
 
 **Key insight:** The impairment signal is powerful at the crash level (outcome discriminator) but weak at the segment level (location discriminator). Segment-level aggregates of crash-level attributes are redundant when the model already has segment-level rates. Future features should target dimensions the model has zero access to currently — such as temporal trends, structural road characteristics, or cross-segment spatial patterns.
 
+### iter_003a — 2026-05-02
+
+**Change:** Add segment_impairment_ratio
+
+**Hypothesis:** Impairment is 4.5x overrepresented in fatal crashes. Segment-level impairment ratio should improve fatal discrimination.
+
+**Result:** Passed Gates 1-2. Failed Gate 3 (gain -0.0019). Collinear with existing rate features.
+
+**Decision:** Rejected
+
+---
+
+### iter_003b — 2026-05-02
+
+**Change:** Add segment_crash_trend (slope of annual crash count)
+
+**Hypothesis:** Trend is orthogonal to rate levels — captures whether a segment is getting more dangerous.
+
+**Result:** Passed Gate 1. Failed Gate 2 (MI 0.0095, Spearman 0.026). 70% of segments have zero trend due to insufficient years of data.
+
+**Decision:** Rejected
+
+---
+
+### iter_003c — 2026-05-02
+
+**Change:** Add road_group_risk (FSI rate per road classification)
+
+**Hypothesis:** Road type is a structural property independent of crash history. Different road classes have fundamentally different risk profiles.
+
+**Result:** Passed Gates 1-2 (Spearman 0.051, barely above 0.05). Failed Gate 3 (gain 0.0015, threshold 0.005). The feature adds real signal but not enough incremental value over existing features for a linear model.
+
+**Decision:** Rejected
+
+**Exhaustion conclusion:** Four feature candidates and one threshold adjustment have been tested with Logistic Regression. None improved val recall. The linear model has extracted maximum value from available features. Model advancement to Random Forest is justified per CLAUDE.md Model Advancement Criteria.
+
 ---
