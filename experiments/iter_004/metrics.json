@@ -1,0 +1,47 @@
+{
+  "_schema_version": "1.0",
+  "iter_id": "iter_004",
+  "date": "2026-05-08",
+  "train": {
+    "split": "train",
+    "recall_combined": 0.8023,
+    "recall_fatal": 0.8065,
+    "recall_injury": 0.8021,
+    "precision": 0.0424,
+    "f1": 0.0805,
+    "flag_rate": 0.2607,
+    "true_positives": 70653,
+    "false_positives": 1596356,
+    "true_negatives": 4710287,
+    "false_negatives": 17414,
+    "support_positive": 88067,
+    "support_total": 6394710,
+    "fatal_windows_total": 2419
+  },
+  "val": {
+    "split": "val",
+    "recall_combined": 0.6909,
+    "recall_fatal": 0.576,
+    "recall_injury": 0.6961,
+    "precision": 0.0424,
+    "f1": 0.0798,
+    "flag_rate": 0.4743,
+    "true_positives": 7983,
+    "false_positives": 180489,
+    "true_negatives": 205300,
+    "false_negatives": 3572,
+    "support_positive": 11555,
+    "support_total": 397344,
+    "fatal_windows_total": 500
+  },
+  "benchmark": {
+    "set": null,
+    "audit_only": true,
+    "note": "Benchmark not run at iteration 004"
+  },
+  "diagnostics": {
+    "generalization_gap": 0.1114,
+    "overfitting_warning": true,
+    "fatal_recall_floor_check": true
+  }
+}

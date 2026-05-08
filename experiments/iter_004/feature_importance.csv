@@ -1,0 +1,9 @@
+feature,gini_importance
+segment_injury_rate,0.5357
+segment_crash_rate,0.2507
+segment_pdo_rate,0.1409
+segment_type_is_grid,0.0419
+segment_fatal_rate,0.02
+month,0.0089
+is_winter,0.001
+is_weekend_heavy,0.0009
