@@ -58,4 +58,16 @@ Copy this template for every new iteration:
 
 **Key insight:** The tension between flag rate and fatal recall cannot be resolved by threshold adjustment alone. The model needs features that specifically improve fatal window discrimination. Next iteration must target feature improvement, not model or threshold changes.
 
+### iter_003 — 2026-05-02
+
+**Change:** Add segment_impairment_ratio (proportion of segment's historical crashes involving any impairment)
+
+**Hypothesis:** EDA confirmed impairment is present in 47.5% of fatal crashes vs 10.4% of injury crashes — a 4.5x overrepresentation. A segment's historical impairment ratio should help the model discriminate fatal-risk locations.
+
+**Result:** Passed Gate 1 (coverage 1.0) and Gate 2 (Spearman 0.064). Failed Gate 3 — val recall dropped by 0.0019 instead of improving. The feature is collinear with existing segment rate features (crash_rate, injury_rate, fatal_rate). Segments with high impairment ratios already have high crash rates, so the impairment ratio adds no new information above what the model already knows.
+
+**Decision:** Rejected
+
+**Key insight:** The impairment signal is powerful at the crash level (outcome discriminator) but weak at the segment level (location discriminator). Segment-level aggregates of crash-level attributes are redundant when the model already has segment-level rates. Future features should target dimensions the model has zero access to currently — such as temporal trends, structural road characteristics, or cross-segment spatial patterns.
+
 ---
