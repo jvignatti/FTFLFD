@@ -106,4 +106,30 @@ Copy this template for every new iteration:
 
 **Exhaustion conclusion:** Four feature candidates and one threshold adjustment have been tested with Logistic Regression. None improved val recall. The linear model has extracted maximum value from available features. Model advancement to Random Forest is justified per CLAUDE.md Model Advancement Criteria.
 
+### iter_004 — 2026-05-03
+
+**Change:** Model advancement from LogisticRegression to RandomForestClassifier (200 trees, max_depth=10, min_samples_leaf=50, class_weight=balanced)
+
+**Hypothesis:** Logistic Regression was exhausted (4 features + 1 threshold tested, all rejected). Random Forest can capture non-linear interactions between features that a linear model cannot express. The same 8 features may produce better discrimination with a non-linear decision boundary.
+
+**Result:** Fatal recall improved from 0.508 to 0.576 (+0.068) — the largest single improvement so far. Combined recall jumped from 0.569 to 0.691. However, the model overfits (generalization gap 0.111 > 0.10 threshold) and over-flags (flag rate 0.474 >> 0.30 maximum). Precision dropped to 0.042, below the 0.05 floor.
+
+**Decision:** Conditionally Accepted
+
+**Interpretation:** The RF found real signal — fatal recall improved meaningfully. But the hyperparameters are too permissive. max_depth=10 on 6.4M rows allows memorization. class_weight="balanced" on 1:71 imbalance amplifies the minority class too aggressively for a tree-based model. Next iteration must constrain the model (reduce depth, increase min_samples_leaf, or adjust class weights) to bring flag rate and precision into compliance without losing the fatal recall gain.
+
+**Feature importance shift:** segment_injury_rate dominates (0.536 Gini) followed by segment_crash_rate (0.251). Notably, segment_fatal_rate has low importance (0.020) — the model predicts fatal+injury windows primarily from injury rate, not fatal rate. This is consistent with the collinearity finding from iter_003a.
+
+### iter_005 — 2026-05-03
+
+**Change:** max_depth reduced from 10 to 6 (all other RF parameters unchanged)
+
+**Hypothesis:** Shallower trees will reduce memorization, lower generalization gap, and reduce flag rate.
+
+**Result:** No meaningful change. Fatal recall unchanged (0.576). Flag rate slightly increased (0.474 → 0.484). Generalization gap marginally improved (0.111 → 0.106). The model makes all its decisions within the first 6 levels — depth was not the root cause of over-flagging.
+
+**Decision:** Rejected
+
+**Key insight:** The over-flagging is driven by class_weight="balanced" on a 1:71 imbalance, not by tree depth. In Random Forest, balanced weighting adjusts leaf vote counts, making the model aggressively predict positives. Next iteration must address the class weighting strategy directly.
+
 ---

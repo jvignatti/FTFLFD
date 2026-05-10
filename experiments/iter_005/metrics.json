@@ -1,0 +1,47 @@
+{
+  "_schema_version": "1.0",
+  "iter_id": "iter_005",
+  "date": "2026-05-10",
+  "train": {
+    "split": "train",
+    "recall_combined": 0.8017,
+    "recall_fatal": 0.7156,
+    "recall_injury": 0.8042,
+    "precision": 0.0415,
+    "f1": 0.0788,
+    "flag_rate": 0.2663,
+    "true_positives": 70607,
+    "false_positives": 1632569,
+    "true_negatives": 4674074,
+    "false_negatives": 17460,
+    "support_positive": 88067,
+    "support_total": 6394710,
+    "fatal_windows_total": 2419
+  },
+  "val": {
+    "split": "val",
+    "recall_combined": 0.6962,
+    "recall_fatal": 0.576,
+    "recall_injury": 0.7017,
+    "precision": 0.0418,
+    "f1": 0.0789,
+    "flag_rate": 0.4843,
+    "true_positives": 8045,
+    "false_positives": 184390,
+    "true_negatives": 201399,
+    "false_negatives": 3510,
+    "support_positive": 11555,
+    "support_total": 397344,
+    "fatal_windows_total": 500
+  },
+  "benchmark": {
+    "set": null,
+    "audit_only": true,
+    "note": "B1 already run at iter_004"
+  },
+  "diagnostics": {
+    "generalization_gap": 0.1055,
+    "overfitting_warning": true,
+    "fatal_recall_floor_check": true
+  }
+}
