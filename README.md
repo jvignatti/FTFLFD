@@ -4,7 +4,9 @@ Proactive traffic fatality and serious injury prediction system for Vermont.
 
 ## Objective
 
-Predict which road segments have high probability of experiencing a fatal or serious injury crash within the next 30 days. The goal is proactive prevention — getting ahead of the problem, not reacting after it happens.
+Identify road segments with elevated risk of fatal or injury crashes within the next 30 days using historical crash data and temporal patterns. The goal is proactive observation — getting ahead of the problem, not reacting after it happens.
+
+**Current limitation:** The source dataset does not distinguish between serious and minor injuries. The model treats all injury severities as the positive class. Serious injury granularity will be incorporated when Department of Health data becomes available in a future phase.
 
 ## Current Status
 

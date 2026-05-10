@@ -73,7 +73,7 @@ When injury severity data becomes available, consider parallel model outputs:
 
 This requires a data source with severity granularity. Do not implement until such data is integrated and validated.
 
-## Split Strategy (v1.1)
+## Split Strategy (v1.2)
 
 | Set | Period | Use |
 |---|---|---|
@@ -89,6 +89,7 @@ This requires a data source with severity granularity. Do not implement until su
 - See config/splits.yaml for exact dates
 - Split boundaries must be enforced programmatically in src/training/splitter.py
 - tests/test_splitter.py must assert: no date overlap, no ID overlap, gap windows correct, row counts reconcile
+- Rolling windows use a 7-day step with 30-day duration, creating 23 days of overlap between consecutive windows. This introduces label autocorrelation — adjacent observations are not independent. Metrics should be interpreted with this in mind: precision may appear lower than true precision due to correlated false positives. When reporting results externally, also compute metrics on a non-overlapping monthly subset to validate. This design was chosen deliberately for finer temporal resolution; the tradeoff is documented, not accidental.
 
 ## Kill Switch (Adaptive)
 

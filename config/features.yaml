@@ -1,6 +1,6 @@
 version: "1.1"
 created: "2026-05-02"
-notes: "Active feature registry. New features added only after passing 3-gate test."
+notes: "Active feature registry. Tracks current state only. Rules and acceptance criteria are defined in CLAUDE.md (authoritative). This file is the registry, CLAUDE.md is the policy."
 
 # 3-gate acceptance rules (locked from project methodology)
 gates:
