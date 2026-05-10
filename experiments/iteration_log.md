@@ -132,4 +132,16 @@ Copy this template for every new iteration:
 
 **Key insight:** The over-flagging is driven by class_weight="balanced" on a 1:71 imbalance, not by tree depth. In Random Forest, balanced weighting adjusts leaf vote counts, making the model aggressively predict positives. Next iteration must address the class weighting strategy directly.
 
+### iter_006 — 2026-05-03
+
+**Change:** class_weight from "balanced" (~71x) to custom {0:1, 1:10}
+
+**Hypothesis:** Balanced weighting on 1:71 imbalance gives 71x penalty for missed positives, causing RF to flag nearly half of all segments. Reducing to 10x should bring flag rate into compliance while preserving enough recall.
+
+**Result:** Overcorrected. Fatal recall collapsed from 0.576 to 0.102 — worse than random baseline (0.157). Flag rate dropped to 0.052, precision improved to 0.139. Generalization gap excellent (-0.002). The model became extremely conservative — high precision but catches almost nothing.
+
+**Decision:** Rejected
+
+**Key insight:** The relationship between class weight and recall is highly non-linear in Random Forest. 71x flags everything, 10x flags nothing. The sweet spot is likely between 20x-50x. Next iteration must sweep this range to find the weight that satisfies all four constraints simultaneously.
+
 ---
