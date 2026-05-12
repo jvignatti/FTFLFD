@@ -144,4 +144,35 @@ Copy this template for every new iteration:
 
 **Key insight:** The relationship between class weight and recall is highly non-linear in Random Forest. 71x flags everything, 10x flags nothing. The sweet spot is likely between 20x-50x. Next iteration must sweep this range to find the weight that satisfies all four constraints simultaneously.
 
+### iter_007 — 2026-05-03
+
+**Change:** Class weight sweep testing 20x, 25x, 30x, 35x, 40x, 50x (one hyperparameter, multiple values)
+
+**Hypothesis:** The sweet spot between 10x (too conservative) and 71x (too aggressive) should satisfy all four constraints simultaneously.
+
+**Result:** No feasible model found. The constraints are mutually exclusive for RF with these 8 features:
+- Fatal recall ≥ 0.50 requires weight ≥ 50x → but flag rate exceeds 0.30
+- Flag rate ≤ 0.30 requires weight ≤ 35x → but fatal recall drops below 0.50
+There is no weight that satisfies both constraints.
+
+**Decision:** Rejected
+
+**Critical finding:** LogReg iter_001 remains the best model across ALL metrics. RF with 8 features is fundamentally underpowered — it cannot find interactions that improve over linear decision boundaries because the features are mostly correlated rates. RF needs either more features or a different feature architecture to justify its complexity.
+
+**Model advancement assessment:** RF is exhausted on the current feature set. Options: accept LogReg as production model, try LightGBM, or return to feature engineering with LogReg.
+
+### iter_008 — 2026-05-03
+
+**Change:** Model advancement from RandomForest to LightGBM (300 trees, max_depth=6, is_unbalance=True, learning_rate=0.05)
+
+**Hypothesis:** Gradient boosting builds trees sequentially (each correcting the previous), which is fundamentally different from RF's parallel averaging. LightGBM's is_unbalance flag may handle 1:71 imbalance more gracefully than RF's class_weight.
+
+**Result:** Nearly identical to RF iter_004. Fatal recall 0.580, flag rate 0.469, precision 0.043. Three constraints violated. The is_unbalance flag produces the same over-flagging behavior as RF balanced weights. Gradient boosting does not solve the fundamental problem.
+
+**Decision:** Rejected
+
+**Feature importance insight:** LightGBM uses month (1872 splits) and segment_crash_rate (2189) much more than RF did — segment_injury_rate is no longer dominant. The model finds different internal patterns but still cannot satisfy the constraint set.
+
+**Exhaustion conclusion:** Three model classes tested (LogisticRegression, RandomForest, LightGBM). Eight iterations completed. LogReg iter_001 is the only model that satisfies all constraints. It is confirmed as the MVP production model.
+
 ---

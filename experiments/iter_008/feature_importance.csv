@@ -1,0 +1,9 @@
+feature,split_importance
+segment_crash_rate,2189.0
+month,1872.0
+segment_injury_rate,1684.0
+segment_pdo_rate,1672.0
+segment_fatal_rate,574.0
+segment_type_is_grid,472.0
+is_winter,276.0
+is_weekend_heavy,261.0
