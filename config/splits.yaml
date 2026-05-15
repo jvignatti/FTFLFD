@@ -1,6 +1,8 @@
-version: 1.1
-created: "2026-05-02"
-notes: "v1.1: training extended back to 2010 after confirming data continuity from 2010-present. Same source, same patterns."
+version: 2.0
+created: "2026-05-03"
+notes: "Phase 2 splits. Training extended to 2022 to address temporal drift identified in Phase 1. B4 (2026) preserved unchanged as final test."
+previous_version: "1.1"
+phase1_drift_finding: "Fatal recall dropped from 0.508 (val) to 0.463 (B2) — model degrades after 3 years without retraining."
 
 gap_days: 30
 
@@ -9,30 +11,25 @@ data_era_flag_required: true
 splits:
   train:
     start: "2010-01-01"
-    end:   "2019-12-31"
+    end:   "2022-12-31"
     evaluation: "used freely"
 
   val:
-    start: "2020-01-01"
-    end:   "2021-12-31"
+    start: "2023-01-30"
+    end:   "2023-12-31"
     evaluation: "used freely"
 
   b1:
-    start: "2022-01-01"
-    end:   "2022-12-31"
+    start: "2024-01-30"
+    end:   "2024-12-31"
     evaluation: "every 5 iterations"
 
   b2:
-    start: "2023-01-01"
-    end:   "2023-12-31"
+    start: "2025-01-30"
+    end:   "2025-12-31"
     evaluation: "every 10 iterations"
 
-  b3:
-    start: "2024-01-01"
-    end:   "2025-12-31"
-    evaluation: "once per phase"
-
   b4:
-    start: "2026-01-01"
+    start: "2026-01-30"
     end:   "auto"
     evaluation: "once. ever. final test."
