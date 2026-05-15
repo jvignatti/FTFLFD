@@ -14,7 +14,7 @@ The goal is proactive prevention of the most severe outcomes — fatalities and 
 2. **Recall-prioritized with precision floor.** False negatives (missed fatalities) are unacceptable. False positives (over-flagging) are acceptable within operational limits. Primary metric is Fatal recall. However, precision must not fall below 0.05 (5%) — a model that flags everything is useless. Maximum flag rate must remain operationally viable (no more than 30% of prediction units flagged as high-risk per cycle).
 3. **Boring models first.** Progression: Logistic Regression → Random Forest → Gradient Boosting → Ensembles/Deep Learning. Never skip levels. Never advance without documented exhaustion of simpler models (see Model Advancement Criteria below).
 4. **Zero data leakage.** No feature, encoding, or aggregate may use information from the future. Rolling windows cannot cross split boundaries. Encodings are fit on training only. See Leakage Rules for full specification.
-5. **Frozen benchmarks.** Benchmark sets are never used for tuning. B1 every 5 iterations (log only). B2 every 10 iterations (log only). B3 once per phase. B4 once ever (final test). Benchmark results must NEVER influence any modeling, feature, or threshold decision. They exist solely as an audit trail.
+5. **Frozen benchmarks.** Benchmark sets are never used for tuning. B1 every 5 iterations (log only). B2 every 10 iterations (log only). B4 once ever (final test). Benchmark results must NEVER influence any modeling, feature, or threshold decision. They exist solely as an audit trail.
 6. **Log like a scientist.** Every iteration logs: what changed, why, hypothesis, result, random seed, dataset hash, feature set version. Failures are entries too.
 7. **Full reproducibility.** Every experiment must be fully reproducible given: the data (identified by SHA256 hash), the config files (identified by version), the feature set (identified by version), and the random seed. If any of these are missing from an experiment log, the experiment is invalid.
 
@@ -73,23 +73,20 @@ When injury severity data becomes available, consider parallel model outputs:
 
 This requires a data source with severity granularity. Do not implement until such data is integrated and validated.
 
-## Split Strategy (v1.2)
+## Split Strategy (v2.1)
 
 | Set | Period | Use |
 |---|---|---|
-| Train | 2010–2019 | Model fitting (used freely) |
-| Val | 2020–2021 | Tuning (used freely, includes COVID disruption) |
-| B1 | 2022 | Blind eval every 5 iterations |
-| B2 | 2023 | Blind eval every 10 iterations |
-| B3 | 2024–2025 | Blind eval once per phase |
+| Train | 2010–2022 | Model fitting (used freely) |
+| Val | 2023 | Tuning (used freely) |
+| B1 | 2024 | Blind eval every 5 iterations |
+| B2 | 2025 | Blind eval every 10 iterations |
 | B4 | 2026 | Final test. Once. Ever. |
 
+- B3 does not exist in Phase 2. It was absorbed into B1 (2024) and B2 (2025). B4 retains its Phase 1 identity as the final test.
 - 30-day gap between every split boundary (rows in gaps are dropped)
 - data_era flag required: early (2010–2014), historical (2015–2019), modern (2020+)
-- See config/splits.yaml for exact dates
-- Split boundaries must be enforced programmatically in src/training/splitter.py
-- tests/test_splitter.py must assert: no date overlap, no ID overlap, gap windows correct, row counts reconcile
-- Rolling windows use a 7-day step with 30-day duration, creating 23 days of overlap between consecutive windows. This introduces label autocorrelation — adjacent observations are not independent. Metrics should be interpreted with this in mind: precision may appear lower than true precision due to correlated false positives. When reporting results externally, also compute metrics on a non-overlapping monthly subset to validate. This design was chosen deliberately for finer temporal resolution; the tradeoff is documented, not accidental.
+- See config/splits.yaml v2.0 for exact dates
 
 ## Kill Switch (Adaptive)
 
