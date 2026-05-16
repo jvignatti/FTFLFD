@@ -1,35 +1,38 @@
-version: 2.0
-created: "2026-05-03"
-notes: "Phase 2 splits. Training extended to 2022 to address temporal drift identified in Phase 1. B4 (2026) preserved unchanged as final test."
-previous_version: "1.1"
-phase1_drift_finding: "Fatal recall dropped from 0.508 (val) to 0.463 (B2) — model degrades after 3 years without retraining."
-
+version: 1.2
+created: "2026-05-16"
+notes: "v1.2: revert to Phase 1 boundaries (identical to v1.1). Phase 2
+  expansion (v2.0, train through 2022) produced fatal recall 0.427, below
+  0.50 floor. PDO reporting collapse confirmed in 2020-2022 window. AADT
+  coverage diagnosis completed (07_aadt_coverage_diagnosis.md). Returning
+  to proven v1.1 configuration before AADT feature gate testing."
+previous_version: "2.0"
+phase2_failure_finding: "Fatal recall 0.427 on Phase 2 set. PDO collapse
+  confirmed as 2020-2022 phenomenon. Phase 2 expansion abandoned."
 gap_days: 30
-
 data_era_flag_required: true
 
 splits:
   train:
     start: "2010-01-01"
-    end:   "2022-12-31"
+    end:   "2019-12-31"
     evaluation: "used freely"
-
   val:
-    start: "2023-01-30"
-    end:   "2023-12-31"
+    start: "2020-01-01"
+    end:   "2021-12-31"
     evaluation: "used freely"
-
   b1:
-    start: "2024-01-30"
-    end:   "2024-12-31"
+    start: "2022-01-01"
+    end:   "2022-12-31"
     evaluation: "every 5 iterations"
-
   b2:
-    start: "2025-01-30"
-    end:   "2025-12-31"
+    start: "2023-01-01"
+    end:   "2023-12-31"
     evaluation: "every 10 iterations"
-
+  b3:
+    start: "2024-01-01"
+    end:   "2025-12-31"
+    evaluation: "once per phase"
   b4:
-    start: "2026-01-30"
+    start: "2026-01-01"
     end:   "auto"
     evaluation: "once. ever. final test."
