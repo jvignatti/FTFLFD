@@ -204,7 +204,7 @@ explicitly documented and locked.
 | # | Decision | Blocker |
 |---|---|---|
 | 1 | Impute missing AADT vs exclude unmatched records vs reject feature | Coverage now available (56.79% overall, 69.96% fatal). **Decision still pending.** See `open_decisions.md`. |
-| 2 | Whether to source FunctionalClass independently from road network layer | Road centerline provides 98.72% coverage (Gate 1 PASS). Independent source is viable. **Decision effectively resolved — use road centerline.** |
+| 2 | Whether to source FunctionalClass independently from road network layer | **REOPENED** — road centerline join diagnosed as invalid (TWN_LR/LRSNUMBER format mismatch). FunctionalClass to be sourced from AADT files via the validated StandardRouteCode join. Coverage via AADT: 56.79% overall, 69.96% fatal — same as segment_aadt. Gate 1 outcome depends on OD-004 resolution. See `open_decisions.md` OD-002 and OD-004. |
 | 3 | Final feature testing order for AADT-derived features | Decision 1 (imputation strategy) |
 | 4 | Whether Gate 1 threshold applies to all records or fatal records only | Methodological discussion. See `open_decisions.md`. |
 

@@ -39,20 +39,35 @@ centerline layer (98.72% coverage, Gate 1 PASS). See OD-002.
 
 ## OD-002 — FunctionalClass Source
 
-**Status:** EFFECTIVELY RESOLVED — use road centerline
+**Status:** REOPENED — road centerline join invalid
 **Blocker for:** functional_class gate testing
 **Created:** 2026-05-16 (from 07_aadt_coverage_diagnosis.md Section 6, Decision 2)
+**Reopened:** 2026-05-16
 
 **Decision:** Whether to source FunctionalClass from the VTrans road centerline
 layer (independent source) or from the AADT join (dependent on AADT coverage).
 
-**Resolution:** Road centerline (`data/raw/road_centerline.csv`, 78,876 segments)
-provides 98.72% overall coverage and 99.43% fatal coverage — Gate 1 PASS via
-independent source. Gate 2 and Gate 3 gate testing is underway
-(see `notebooks/diagnostic/gate_test_functional_class.py`).
+**Prior resolution (invalidated):** Road centerline was selected as the source
+(98.72% overall coverage, 99.43% fatal). Gate 2 and Gate 3 testing was pending.
 
-**Action required:** Commit Gate 2/Gate 3 results to a formal experiment artifact
-when testing is complete.
+**Invalidation:** The road centerline join was diagnosed as invalid. The centerline
+uses TWN_LR encoding; the crash data uses LRSNUMBER encoding. These are not
+equivalent formats. The join produces coverage figures that cannot be trusted.
+All prior Gate 1 figures derived from the road centerline source are void.
+
+**New decision:** FunctionalClass will be sourced from the AADT files
+(`data/raw/aadt_limited.csv` + `data/raw/aadt_other.csv`) via the validated
+StandardRouteCode interval join. This is the same join used for segment_aadt.
+
+**Coverage via AADT source:**
+- Overall: 56.79% (same as segment_aadt — FunctionalClass resides in the same records)
+- Fatal records: 69.96%
+
+**Gate 1 status:** Depends on OD-004 resolution. Under the current 95% all-records
+threshold, FunctionalClass fails Gate 1 by 38 pp.
+
+**Dependencies:** OD-004 must be resolved before Gate 1 verdict is issued.
+Gate test script has been rewritten to use AADT join (see OD-006).
 
 ---
 
@@ -78,8 +93,8 @@ AADT-dependent features cannot be ordered until OD-001 is resolved.
 
 ## OD-004 — Gate 1 Threshold Scope
 
-**Status:** OPEN
-**Blocker for:** Final gate decision on AADT-derived features
+**Status:** ACTIVE BLOCKER — explicit sign-off required before any AADT feature gate result is accepted
+**Blocker for:** Gate 1 verdict on functional_class, segment_aadt, segment_crash_rate_per_vmt, is_divided
 **Created:** 2026-05-16 (from 07_aadt_coverage_diagnosis.md Section 6, Decision 4)
 
 **Decision required:**
@@ -89,23 +104,43 @@ training rows."
 For AADT-derived features:
 - Overall coverage: 56.79% (fails Gate 1 by 38 pp)
 - Fatal record coverage: 69.96% (fails Gate 1 by 25 pp)
+- State-system fatal coverage: 85–91% (best case — still below 95%)
 
-If Gate 1 is evaluated on **fatal records only**, the interpretation changes:
-the model's signal comes disproportionately from fatal windows, and 70% fatal
-coverage may be acceptable if imputation handles the gap.
+**Three options:**
 
-**Arguments for all-records threshold:**
+Option A — Keep Gate 1 as written (95% of all training rows):
+- FunctionalClass / segment_aadt fail at 56.79% (38 pp short)
+- Consistent with CLAUDE.md as written; no precedent set
+- Requires either imputation (OD-001) to raise coverage, or rejection of AADT features
+
+Option B — Evaluate Gate 1 on fatal records only (95% of fatal training rows):
+- FunctionalClass / segment_aadt fail at 69.96% (25 pp short)
+- More aligned with the model's purpose (predicting fatal locations)
+- Still requires imputation or rejection — PDO missingness alone does not close the gap
+- Sets a precedent for class-conditional coverage thresholds; must be documented as such
+
+Option C — Restrict Gate 1 scope to state-system roads (~85–91% coverage):
+- State-system roads have highest AADT coverage and highest fatal concentration
+- Coverage within state-system scope may approach 85–91% — still potentially below 95%
+- Would require the model's operational scope to be explicitly locked to state-system roads
+- Most complex option; requires a separate scope decision before feature work can proceed
+
+**Arguments for all-records threshold (Option A):**
 - Consistency — same rule applies to every feature
 - PDO windows are real training signal (negative class definition)
 - Relaxing the threshold sets a precedent
 
-**Arguments for fatal-records threshold:**
+**Arguments for fatal-records threshold (Option B):**
 - The model's purpose is predicting fatal locations
 - PDO missingness is heavily concentrated on local roads (low fatal risk anyway)
 - 70% fatal coverage with imputation may outperform lower-coverage features
 
-**Resolution path:** Requires explicit discussion and documented decision before
-any AADT feature gate result is accepted or rejected.
+**Resolution path:** Requires explicit sign-off — not inferred from context. This
+decision must be recorded here before gate_test_functional_class.py is run and
+before any Gate 1 verdict is issued for any AADT-derived feature.
+
+**Interaction:** This decision also interacts with OD-001 (AADT imputation strategy).
+If Option A or B is chosen, imputation may be required to satisfy the 95% threshold.
 
 ---
 
@@ -131,20 +166,28 @@ are not preserved anywhere on disk.
 
 ## OD-006 — functional_class Gate 2 and Gate 3 Results
 
-**Status:** OPEN — results not yet committed
+**Status:** BLOCKED — OD-004 unresolved; gate test must not be run
 **Blocker for:** iter_009 (adding functional_class to feature set, if accepted)
 **Created:** 2026-05-16
 
-**Decision required:**
-`notebooks/diagnostic/gate_test_functional_class.py` exists and is ready to run.
-Gate 1 already passed (98.72% all, 99.43% fatal, from functional_class_coverage.py).
-Gate 2 and Gate 3 results must be:
+**Current state:**
+`notebooks/diagnostic/gate_test_functional_class.py` has been rewritten to use the
+AADT interval join (StandardRouteCode + BeginMM/EndMM filter) instead of the invalid
+road centerline join. Gate 1 is reported dynamically; verdict is withheld pending
+OD-004 resolution. Gate 2 and Gate 3 code is present but results must not be
+interpreted until Gate 1 is resolved.
+
+All prior Gate 1 figures for FunctionalClass (98.72% overall, 99.43% fatal) derived
+from the road centerline source are invalidated and must be disregarded.
+
+**Blocking conditions:**
+1. OD-004 must be resolved and signed off before Gate 1 verdict is accepted or rejected.
+2. Gate test script must not be run until OD-004 is resolved.
+
+**When unblocked, Gate 2 and Gate 3 results must be:**
 1. Run against Phase 1 train/val featured parquets
 2. Committed to a formal artifact (experiment directory or iteration_log.md entry)
-3. Recorded in features.yaml if Gate 3 passes
-
-The script uses the correct Phase 1 baseline (BASELINE_FATAL_RECALL=0.508) and
-reads Phase 1 parquets. It is ready to run.
+3. Recorded in config/features.yaml if Gate 3 passes
 
 ---
 
