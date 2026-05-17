@@ -2,42 +2,45 @@
   "_schema_version": "1.0",
   "_documentation": "Iteration 001 baseline. See CLAUDE.md for metric definitions.",
   "iter_id": "iter_001",
-  "date": "2026-05-07",
+  "date": "2026-05-02",
+  "audit_note": "Reconstructed 2026-05-16 — original Phase 1 metrics.json was overwritten by Phase 2 run on 2026-05-15. Values sourced from registry.csv (recall_val, precision_val, recall_train, generalization_gap), benchmark_audit.jsonl (val_recall_fatal independently confirmed), iteration_log.md (flag_rate 31.7%), and Phase 1 parquet files (all support counts). Train precision/FP/TN/flag_rate not recorded in any source of truth and are set null. TP/FP/TN/FN on val computed from sourced values.",
   "train": {
     "split": "train",
     "recall_combined": 0.633,
-    "recall_fatal": 0.6598,
-    "recall_injury": 0.6323,
-    "precision": 0.061,
-    "f1": 0.1112,
-    "flag_rate": 0.143,
-    "true_positives": 55750,
-    "false_positives": 858574,
-    "true_negatives": 5448069,
-    "false_negatives": 32317,
+    "recall_fatal": null,
+    "recall_injury": null,
+    "precision": null,
+    "f1": null,
+    "flag_rate": null,
+    "true_positives": 55746,
+    "false_positives": null,
+    "true_negatives": null,
+    "false_negatives": 32321,
     "support_positive": 88067,
     "support_negative": 6306643,
     "support_total": 6394710,
     "fatal_windows_total": 2419,
-    "injury_only_windows_total": 85648
+    "injury_only_windows_total": 85648,
+    "_source": "recall_combined exact from registry.csv. TP/FN derived from recall_combined x support_positive. Support counts exact from train_featured.parquet. Precision/FP/TN/flag_rate not recorded in any Phase 1 source of truth."
   },
   "val": {
     "split": "val",
     "recall_combined": 0.5688,
     "recall_fatal": 0.508,
-    "recall_injury": 0.5716,
+    "recall_injury": 0.5720,
     "precision": 0.0521,
-    "f1": 0.0955,
-    "flag_rate": 0.3172,
-    "true_positives": 6573,
-    "false_positives": 119481,
-    "true_negatives": 266308,
-    "false_negatives": 4982,
+    "f1": 0.0954,
+    "flag_rate": 0.317,
+    "true_positives": 6577,
+    "false_positives": 119661,
+    "true_negatives": 266128,
+    "false_negatives": 4978,
     "support_positive": 11555,
     "support_negative": 385789,
     "support_total": 397344,
     "fatal_windows_total": 500,
-    "injury_only_windows_total": 11055
+    "injury_only_windows_total": 11055,
+    "_source": "recall_combined, precision exact from registry.csv. recall_fatal exact from registry.csv + benchmark_audit.jsonl + iteration_log.md (3 independent sources). flag_rate exact from iteration_log.md (31.7%). Support counts exact from val_featured.parquet. recall_injury, f1, TP/FP/TN/FN derived from the above."
   },
   "benchmark": {
     "set": null,
@@ -47,12 +50,13 @@
     "precision": null,
     "f1": null,
     "audit_only": true,
-    "note": "Benchmark not run at iteration 001 (per protocol: B1 at iteration 5)"
+    "note": "Benchmark not run at iteration 001 (per protocol: B1 at iteration 5). B2 end-of-phase audit recorded in experiments/benchmark_audit.jsonl."
   },
   "diagnostics": {
     "generalization_gap": 0.0642,
     "benchmark_gap": null,
     "overfitting_warning": false,
-    "fatal_recall_floor_check": true
+    "fatal_recall_floor_check": true,
+    "_source": "generalization_gap exact from registry.csv. overfitting_warning derived (0.0642 < 0.10 threshold). fatal_recall_floor_check derived (0.508 >= 0.50 floor)."
   }
 }

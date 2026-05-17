@@ -1,7 +1,7 @@
 # 07 — AADT Coverage Diagnosis
 
 **Date:** 2026-05-16  
-**Status:** Complete — findings locked, decisions pending Phase 1 revert  
+**Status:** Complete — Phase 1 revert complete, coverage recomputed 2026-05-16  
 **Author:** JC  
 **Diagnostic scripts:** `notebooks/diagnostic/schema_check.py`, `aadt_coverage_analysis.py`, `pdo_reporting_trend.py`
 
@@ -30,14 +30,13 @@ of that approach before any modeling changes are made.
 
 | File | Records | Years | Notes |
 |---|---|---|---|
-| `data/splits/train.parquet` | 130,946 | 2010–2022 | **Phase 2 split — not Phase 1** |
-| `data/splits/val.parquet` | — | 2020–2021 | Phase 2 validation |
+| `data/splits/train.parquet` | 109,695 | 2010–2019 | Phase 1 split — current active config |
+| `data/splits/val.parquet` | 12,964 | 2020–2021 | Phase 1 validation |
 | `data/processed/vt_crashes_ingested.parquet` | 179K+ | 2010–2026 | Full ingested dataset |
 
-**Critical note:** At the time of this diagnostic, `train.parquet` contains the Phase 2
-training set (2010–2022). The Phase 1 revert (2010–2019) has not yet been executed.
-All coverage numbers in this document were computed on the Phase 2 training set and
-**must be recomputed after the Phase 1 revert**.
+**Note:** Phase 1 revert is complete (commit 4048a05). Coverage numbers in Section 4 were
+recomputed against the Phase 1 training set on 2026-05-16. Prior Phase 2 numbers
+(train 130,946 rows, 58.06% overall coverage) are superseded by the values in Section 4.2.
 
 ### 2.2 AADT Data
 
@@ -115,7 +114,7 @@ and unlikely to materially bias crash-history features over that period.
 
 ---
 
-## 4. AADT Join Coverage (Phase 2 Training Set)
+## 4. AADT Join Coverage (Phase 1 Training Set)
 
 ### 4.1 Join Logic
 
@@ -126,22 +125,21 @@ and unlikely to materially bias crash-history features over that period.
 
 ### 4.2 Coverage Results
 
-**These numbers were computed on the Phase 2 training set (2010–2022).**  
-**They must be recomputed after reverting to Phase 1 splits.**
+**Recomputed on Phase 1 training set (2010–2019) on 2026-05-16.**
 
-| Severity | Total Records | Coverage |
-|---|---|---|
-| All records | 130,946 | **58.06%** |
-| Fatal | 765 | **70.85%** |
-| Injury | 26,120 | **67.53%** |
-| PDO | 104,061 | **55.58%** |
+| Severity | Total Records | Matched | Coverage |
+|---|---|---|---|
+| All records | 109,695 | 62,296 | **56.79%** |
+| Fatal | 566 | 396 | **69.96%** |
+| Injury | 21,325 | 14,205 | **66.61%** |
+| PDO | 87,804 | 47,695 | **54.32%** |
 
 ### 4.3 Gate 1 Assessment
 
 Gate 1 threshold: feature availability ≥ 95% of training records.
 
-**Gate 1 fails at all severity levels on the Phase 2 training set.**
-Overall coverage of 58.06% is 37 percentage points below threshold.
+**Gate 1 fails at all severity levels on the Phase 1 training set.**
+Overall coverage of 56.79% is 38 percentage points below threshold.
 
 However, the coverage pattern is informative:
 
@@ -150,16 +148,16 @@ However, the coverage pattern is informative:
    best-case pattern for this use case — fatals concentrate on state-maintained
    roads which have the highest AADT coverage.
 
-2. **Fatal coverage (70.85%) is the most relevant number.** The Gate 1 threshold
+2. **Fatal coverage (69.96%) is the most relevant number.** The Gate 1 threshold
    was designed to prevent sparse features from distorting model coefficients.
-   A feature that covers 71% of fatals — the signal the model is trained to predict —
-   is more informative than the same coverage rate over all records including
-   PDO-contaminated observations.
+   A feature that covers 70% of fatals — the signal the model is trained to predict —
+   is more informative than the same coverage rate over all records.
 
-3. **Phase 1 revert will change these numbers.** PDO records (lowest coverage at
-   55.58%) drop from ~41,000 to ~7,000 after reverting to 2010–2019. This will
-   shift the overall coverage number upward, potentially materially. Coverage must
-   be recomputed before any Gate 1 decision is made.
+3. **Phase 1 vs Phase 2 comparison.** Phase 1 overall coverage (56.79%) is slightly
+   lower than Phase 2 (58.06%) despite having fewer PDO records. This is because PDO
+   crashes that do match AADT were removed when the training window shrank. Fatal
+   coverage is stable: 69.96% (Phase 1) vs 70.85% (Phase 2) — a 0.89 point difference
+   that does not change the Gate 1 outcome.
 
 ### 4.4 Missingness Mechanism
 
@@ -205,21 +203,20 @@ explicitly documented and locked.
 
 | # | Decision | Blocker |
 |---|---|---|
-| 1 | Impute missing AADT vs exclude unmatched records vs reject feature | Phase 1 coverage numbers |
-| 2 | Whether to source FunctionalClass independently from road network layer | Phase 1 coverage numbers |
-| 3 | Final feature testing order | Decisions 1 and 2 |
-| 4 | Whether Gate 1 threshold applies to all records or fatal records only | Methodological discussion |
+| 1 | Impute missing AADT vs exclude unmatched records vs reject feature | Coverage now available (56.79% overall, 69.96% fatal). **Decision still pending.** See `open_decisions.md`. |
+| 2 | Whether to source FunctionalClass independently from road network layer | Road centerline provides 98.72% coverage (Gate 1 PASS). Independent source is viable. **Decision effectively resolved — use road centerline.** |
+| 3 | Final feature testing order for AADT-derived features | Decision 1 (imputation strategy) |
+| 4 | Whether Gate 1 threshold applies to all records or fatal records only | Methodological discussion. See `open_decisions.md`. |
 
 ---
 
 ## 7. Immediate Next Steps
 
-1. **Locate and read split generation logic** (`config/splits.yaml`, `data/raw/split.py`,
-   `src/training/splitter.py`) to confirm Phase 1 revert procedure.
-2. **Regenerate train.parquet for Phase 1 (2010–2019)** using existing split pipeline.
-3. **Rerun `aadt_coverage_analysis.py`** against Phase 1 training set.
-4. **Return to open decisions (Section 6)** with Phase 1 coverage numbers in hand.
-5. **Do not touch any modeling code** until decisions are documented and locked.
+1. ~~Locate and read split generation logic~~ — **Done.** splits.yaml v1.2 active, Phase 1 boundaries confirmed.
+2. ~~Regenerate train.parquet for Phase 1 (2010–2019)~~ — **Done.** 109,695 records, 2010-01-01 to 2019-12-30. Commit 4048a05.
+3. ~~Rerun `aadt_coverage_analysis.py` against Phase 1 training set~~ — **Done 2026-05-16.** Results in Section 4.2.
+4. **Resolve open decisions (Section 6)** — Coverage numbers now available. Decision 1 (imputation strategy) and Decision 4 (Gate 1 threshold scope) remain open. See `docs/technical/open_decisions.md`.
+5. **Do not touch any modeling code** until open decisions are documented and locked.
 
 ---
 

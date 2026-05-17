@@ -73,20 +73,20 @@ When injury severity data becomes available, consider parallel model outputs:
 
 This requires a data source with severity granularity. Do not implement until such data is integrated and validated.
 
-## Split Strategy (v2.1)
+## Split Strategy (v1.2)
 
-| Set | Period | Use |
+| Set | Period | Purpose |
 |---|---|---|
-| Train | 2010–2022 | Model fitting (used freely) |
-| Val | 2023 | Tuning (used freely) |
-| B1 | 2024 | Blind eval every 5 iterations |
-| B2 | 2025 | Blind eval every 10 iterations |
-| B4 | 2026 | Final test. Once. Ever. |
+| Train | 2010–2019 | Model training |
+| Val | 2020–2021 | Free evaluation |
+| B1 | 2022 | Every 5 iterations |
+| B2 | 2023 | Every 10 iterations |
+| B3 | 2024–2025 | Once per phase |
+| B4 | 2026 | Once. Ever. Final test. |
 
-- B3 does not exist in Phase 2. It was absorbed into B1 (2024) and B2 (2025). B4 retains its Phase 1 identity as the final test.
 - 30-day gap between every split boundary (rows in gaps are dropped)
 - data_era flag required: early (2010–2014), historical (2015–2019), modern (2020+)
-- See config/splits.yaml v2.0 for exact dates
+- See config/splits.yaml v1.2 for exact dates
 
 ## Kill Switch (Adaptive)
 
