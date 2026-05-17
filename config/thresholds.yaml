@@ -1,6 +1,9 @@
-version: "1.0"
+version: "1.1"
 created: "2026-05-02"
-notes: "All numerical thresholds locked from methodology decisions. Changes require new version."
+updated: "2026-05-16"
+notes: "v1.1: adaptive kill switch tiers added to match CLAUDE.md policy. v1.0 had
+  a single flat 0.03 threshold; CLAUDE.md always described a three-tier adaptive rule.
+  All other values unchanged."
 
 # Reproducibility
 random_seed: 42
@@ -12,9 +15,16 @@ prediction_windows:
   phase_3: 365         # days — strategic decisions (future)
 
 # Kill switch (full project stop conditions)
+# Adaptive rule — minimum absolute recall improvement on val set per iteration tier
 kill_switch:
   max_iterations: 20
-  min_recall_improvement: 0.03   # 3 percentage points absolute on val recall
+  consecutive_failures_before_stop: 3  # stop if threshold not met 3 iterations in a row
+  iter_1_to_5:
+    min_recall_improvement: 0.03   # pipeline validation phase — 3 pp minimum
+  iter_6_to_15:
+    min_recall_improvement: 0.01   # refinement phase — 1 pp minimum
+  iter_16_to_20:
+    min_recall_improvement: 0.001  # diminishing returns phase — any measurable gain
 
 # Overfitting and generalization warnings
 warnings:

@@ -3,7 +3,12 @@
 **Document:** `docs/technical/05_phase2_plan.md`
 **Version:** 1.0
 **Created:** 2026-05-03
-**Status:** Active
+**Status:** ABANDONED — 2026-05-16
+
+> **STATUS: ABANDONED** — Phase 2 training (2010–2022) produced fatal recall 0.427,
+> below the 0.50 floor. PDO reporting collapse confirmed as a 2020–2022 phenomenon.
+> Splits reverted to Phase 1 (v1.2, train 2010–2019). See `docs/technical/07_aadt_coverage_diagnosis.md`.
+> B3/B4 parquet files that predate this plan remain valid Phase 1 artifacts (see Section 2 note).
 
 ---
 
@@ -33,6 +38,8 @@ Retraining with more recent data is the direct fix.
 - 30-day gaps enforced between all splits (unchanged)
 - data_era flag updated: early (2010–2014), historical (2015–2019), modern (2020+)
 - B4 (2026) remains untouched — final test preserved across phases
+
+> **Note on Phase 1 B3 artifacts:** The files `data/splits/b3.parquet`, `b3_featured.parquet`, and `b3_windows.parquet` still exist on disk. These are Phase 1 artifacts covering 2024–2025 under the old split schema. They are not referenced by any Phase 2 pipeline code and must not be used for tuning or evaluation. B3 no longer exists as a split in `config/splits.yaml` v2.0 — that date range is now covered by B1 (2024) and B2 (2025). Do not delete these files; they are retained as a Phase 1 audit trail.
 
 ## 3. AADT Data Integration
 
