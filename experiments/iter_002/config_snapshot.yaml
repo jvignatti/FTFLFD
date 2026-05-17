@@ -20,26 +20,10 @@ model_class: LogisticRegression
 predecessor: iter_001
 random_seed: 42
 splits_config_version: '1.1'
-threshold: !!python/object/apply:numpy._core.multiarray.scalar
-- &id001 !!python/object/apply:numpy.dtype
-  args:
-  - f8
-  - false
-  - true
-  state: !!python/tuple
-  - 3
-  - <
-  - null
-  - null
-  - null
-  - -1
-  - -1
-  - 0
-- !!binary |
-  pHA9Ctej4D8=
+threshold: 0.52
+threshold_note: "Original value stored as numpy binary object — replaced with float
+  during 2026-05-16 audit. Binary decoded to 0.52, consistent with registry.csv and
+  iteration_log.md records."
 threshold_change_from: 0.5
-threshold_change_to: !!python/object/apply:numpy._core.multiarray.scalar
-- *id001
-- !!binary |
-  pHA9Ctej4D8=
+threshold_change_to: 0.52
 thresholds_config_version: '1.0'

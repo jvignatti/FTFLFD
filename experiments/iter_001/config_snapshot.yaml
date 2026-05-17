@@ -1,3 +1,15 @@
+iter_id: iter_001
+date: '2026-05-02'
+model_class: LogisticRegression
+hyperparameters:
+  C: 1.0
+  class_weight: balanced
+  max_iter: 1000
+  random_state: 42
+  solver: lbfgs
+random_seed: 42
+threshold: 0.5
+feature_set_version: '1.1'
 active_features:
 - segment_crash_rate
 - segment_fatal_rate
@@ -7,17 +19,22 @@ active_features:
 - is_winter
 - is_weekend_heavy
 - segment_type_is_grid
-date: '2026-05-07'
-feature_set_version: '1.1'
-hyperparameters:
-  C: 1.0
-  class_weight: balanced
-  max_iter: 1000
-  random_state: 42
-  solver: lbfgs
-iter_id: iter_001
-model_class: LogisticRegression
-random_seed: 42
 splits_config_version: '1.1'
-threshold: 0.5
+splits_config_note: "v1.1 boundaries identical to current v1.2. v1.2 adds audit trail
+  note only (documents Phase 2 failure). Train 2010-2019, Val 2020-2021."
 thresholds_config_version: '1.0'
+git_commit_sha: unavailable — not recorded at run time
+dataset_hashes: unavailable — not recorded at run time
+class_distribution:
+  train_windows: 6394710
+  train_fatal_windows: 2419
+  train_positive_windows: 88067
+  train_negative_windows: 6306643
+  val_windows: 397344
+  val_fatal_windows: 500
+  val_positive_windows: 11555
+  val_negative_windows: 385789
+audit_note: "Fields added 2026-05-16 during post-hoc audit. Original snapshot dated
+  2026-05-15 was overwritten by Phase 2 run. Date corrected to 2026-05-02 per registry.csv.
+  class_distribution sourced from Phase 1 parquet files. git_commit_sha and dataset_hashes
+  were not recorded at run time."
