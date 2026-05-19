@@ -1,3 +1,16 @@
+"""
+check_holidays.py
+-----------------
+Diagnostic: explore whether specific holiday windows show elevated fatal crash rates,
+Phase 1 training set (2010–2019).
+
+Key finding: holiday windows (New Year's, July 4th, Halloween) do not show a consistent
+spike in daily fatal rate large enough to justify a dedicated holiday feature.
+
+Date: 2026-05-15
+Status: diagnostic only
+"""
+
 import pandas as pd
 
 df = pd.read_parquet("data/splits/train.parquet")

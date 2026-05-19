@@ -1,3 +1,17 @@
+"""
+check_fatal_injury.py
+---------------------
+Diagnostic: temporal and impairment patterns in fatal and injury crashes, Phase 1
+training set (2010–2019).
+
+Key finding: fatal crashes peak in summer months and on weekends; impaired driving is
+elevated in fatals relative to injuries. No single pattern is strong enough to justify
+a new standalone feature.
+
+Date: 2026-05-15
+Status: diagnostic only
+"""
+
 import pandas as pd
 
 df = pd.read_parquet("data/splits/train.parquet")
